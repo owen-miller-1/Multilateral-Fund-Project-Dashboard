@@ -1,8 +1,10 @@
 # Multilateral Fund Project Dashboard
 
 ![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
-![Vega](https://img.shields.io/badge/Vega-Deneb-1F77B4?style=for-the-badge)
+![DAX](https://img.shields.io/badge/DAX-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+![Vega](https://img.shields.io/badge/Vega--Lite-1F77B4?style=for-the-badge)
 ![ArcGIS](https://img.shields.io/badge/ArcGIS-2C7AC3?style=for-the-badge&logo=esri&logoColor=white)
+![Microsoft Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 
 ## Overview
 
