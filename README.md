@@ -19,9 +19,9 @@ financing across 140+ countries from 1990 to present.
 
 ## Preview
 
-![Overview Page](screenshots/overview_global.png)
-![Tooltip](screenshots/tooltip_peru.png)
-![Projects Page](screenshots/projects_argentina.png)
+<img width="2425" height="1355" alt="Screenshot 2026-05-26 110704" src="https://github.com/user-attachments/assets/18af6be9-5e8f-47ea-8d9c-486466fad394" />
+<img width="2417" height="1354" alt="Screenshot 2026-05-26 105738" src="https://github.com/user-attachments/assets/c5a1d1f9-c90b-48c0-9216-3cfb3af2eba7" />
+<img width="2419" height="1363" alt="Screenshot 2026-05-26 105300" src="https://github.com/user-attachments/assets/444aac04-65dc-452b-8cc8-36dbf65ea388" />
 
 ---
 
