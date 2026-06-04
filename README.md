@@ -26,9 +26,8 @@ This project grew out of two years working with MLF data at the Secretariat leve
 
 ## Preview
 
-<img width="2419" height="1363" alt="Screenshot 2026-05-26 105300" src="https://github.com/user-attachments/assets/444aac04-65dc-452b-8cc8-36dbf65ea388" />
-<img width="2425" height="1355" alt="Screenshot 2026-05-26 110704" src="https://github.com/user-attachments/assets/18af6be9-5e8f-47ea-8d9c-486466fad394" />
-<img width="2417" height="1354" alt="Screenshot 2026-05-26 105738" src="https://github.com/user-attachments/assets/c5a1d1f9-c90b-48c0-9216-3cfb3af2eba7" />
+[<blockquote class="imgur-embed-pub" lang="en" data-id="a/FmWFFSu" data-context="false" ><a href="//imgur.com/a/FmWFFSu"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>](https://i.imgur.com/H0aTiIh.gif)
+
 
 
 ---
