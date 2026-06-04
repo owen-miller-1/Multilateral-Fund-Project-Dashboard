@@ -25,10 +25,7 @@ This project grew out of two years working with MLF data at the Secretariat leve
 ---
 
 ## Preview
-
-[<blockquote class="imgur-embed-pub" lang="en" data-id="a/FmWFFSu" data-context="false" ><a href="//imgur.com/a/FmWFFSu"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>](https://i.imgur.com/H0aTiIh.gif)
-
-
+<img width="2065" height="1149" alt="MLF Dashboard gif2" src="https://github.com/user-attachments/assets/27bf4377-c0c9-4bb7-9743-99ecc67c2df8" />
 
 ---
 
