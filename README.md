@@ -48,7 +48,7 @@ Before building the dashboard, I enhanced the data in a few ways:
 ### Overview
 Regional/country-level summary with interactive map, KPI cards, and slicers for region, country, period, and attributes.
 
-<img width="2428" height="1362" alt="MLF Dashboard gif3" src="https://github.com/user-attachments/assets/cf60d70a-0af2-44cf-a699-10c7f726bded" />
+
 
 ### Project Details
 Country-level drill-through showing full project list, agency and type breakdowns, and cumulative phaseout time series.
