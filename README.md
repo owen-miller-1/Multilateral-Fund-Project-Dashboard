@@ -41,7 +41,7 @@ Before building the dashboard, I enhanced the data in a few ways:
 - Created a lookup table mapping countries to latitude/longitude coordinates and flag image URLs, enabling the choropleth map and flag display throughout the dashboard. 
 - Added columns aggregating certain variables such as budget and expenditures for easy use in visuals.
 - Cleaned and restructured data to ensure compatibility with Power BI's data model and enable efficient processing across visuals.
-- Applied additional transformations including field categorization, custom sort ordering, and column renaming for consistency across visuals
+- Applied additional transformations including field categorization, custom sort ordering, and column renaming for consistency across visuals.
 
 
 ## Pages
