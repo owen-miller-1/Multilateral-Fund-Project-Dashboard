@@ -1,0 +1,391 @@
+-- ============================================================
+-- MULTILATERAL FUND PROJECT DASHBOARD
+-- DAX Measures
+-- ============================================================
+
+
+-- ============================================================
+-- 1. CORE FINANCIAL MEASURES
+-- Basic aggregations for approved funding and disbursements,
+-- including Programme Support Costs (PSC).
+-- ============================================================
+
+-- Total approved funding including support costs
+Funds Approved = 
+SUM('DataBase'[Approved Funding plus Adjustments (US$)]) 
+    + SUM('DataBase'[Support Cost Approved (US$)])
+
+
+-- Total funds disbursed including support costs
+Funds Disbursed with PSC = 
+SUM(DataBase[Funds Disbursed (US$)]) +
+SUM(DataBase[Support Cost Disbursed (US$)])
+
+
+-- Remaining undisbursed funds
+Remaining Funds = 
+[Funds Approved] - [Funds Disbursed with PSC]
+
+
+-- Ratio of disbursed to approved funds
+Disbursement Rate = 
+DIVIDE(
+    [Funds Disbursed with PSC],
+    [Funds Approved]
+)
+
+
+-- ============================================================
+-- 2. PROJECT COUNTS
+-- Count measures used in KPI cards and map visuals.
+-- ============================================================
+
+-- Projects with status FIN (Finished) or COM (Completed)
+Completed Projects = 
+CALCULATE(
+    COUNTROWS(DataBase),
+    DataBase[Status] IN {"FIN", "COM"}
+)
+
+
+-- Projects currently in progress
+Ongoing Projects = 
+CALCULATE(
+    COUNTROWS(DataBase),
+    DataBase[Status] = "ONG"
+)
+
+
+-- Used for the choropleth map — includes all active and completed
+-- statuses and ignores period filters so the map always retains
+-- colour regardless of slicer selection
+Map Completed Projects = 
+CALCULATE(
+    COUNTROWS(DataBase),
+    DataBase[Status] IN {"FIN", "ONG", "COM", "CLO"},
+    REMOVEFILTERS(DataBase[Triennium]),
+    REMOVEFILTERS(DataBase[Date Approved])
+)
+
+
+-- ============================================================
+-- 3. PHASEOUT MEASURES (ODP)
+-- Ozone Depleting Potential (ODP) tonnes — the primary unit
+-- for measuring phaseout under the Montreal Protocol.
+-- ============================================================
+
+-- Total ODP tonnes phased out
+ODP Phased Out = 
+SUM(DataBase[Consumption ODP Phased Out])
+
+
+-- Total ODP tonnes targeted for phaseout per project proposals
+ODP Target = 
+SUM(DataBase[Consumption ODP to be Phased Out per Proposal])
+
+
+-- Remaining ODP tonnes yet to be phased out
+Remaining ODP = 
+SUM('DataBase'[Consumption ODP to be Phased Out per Proposal])
+    - SUM('DataBase'[Consumption ODP Phased Out])
+
+
+-- Ratio of ODP phased out to target
+Phase Out Progress = 
+DIVIDE(
+    SUM('DataBase'[Consumption ODP Phased Out]),
+    SUM('DataBase'[Consumption ODP to be Phased Out per Proposal])
+)
+
+
+-- Formatted display version — returns "Not applicable" when no
+-- ODP target exists (e.g. institutional strengthening projects)
+Phase Out Progress (Display) = 
+VAR Progress =
+    [Phase Out Progress]
+
+VAR ODP_Target =
+    CALCULATE(
+        SUM(DataBase[Consumption ODP to be Phased Out per Proposal])
+    )
+
+RETURN
+IF(
+    ISBLANK(ODP_Target) || ODP_Target = 0,
+    "Not applicable",
+    FORMAT(Progress, "0.00%")
+)
+
+
+-- Classifies a country's phaseout activity as Production,
+-- Consumption, or both — used in the Project Details page
+Type Prod Cons = 
+VAR HasProduction = SUM('DataBase'[Production ODP to be Phased Out per Proposal]) > 0 
+        || SUM('DataBase'[Production ODP Phased Out]) > 0
+VAR HasConsumption = SUM('DataBase'[Consumption ODP to be Phased Out per Proposal]) > 0
+        || SUM('DataBase'[Consumption ODP Phased Out]) > 0
+RETURN
+SWITCH(
+    TRUE(),
+    HasProduction && HasConsumption, "Production & Consumption",
+    HasProduction, "Production",
+    HasConsumption, "Consumption",
+    "N/A"
+)
+
+
+-- ============================================================
+-- 4. UNIT TOGGLE MEASURES
+-- These measures power the dynamic toggle between ODP tonnes
+-- and CO2-equivalent tonnes across all relevant visuals.
+-- The toggle is driven by a disconnected 'Units' table with
+-- values "ODPt" and "CO2eqt".
+-- ============================================================
+
+-- Returns the correct phaseout value based on selected unit
+Phased Out Values = 
+SWITCH(
+    SELECTEDVALUE('Units'[Unit]),
+    "ODPt", [ODP Phased Out],
+    "CO2eqt", [CO2 Phased Out],
+    BLANK()
+)
+
+
+-- Returns the correct target value based on selected unit
+Target Values = 
+SWITCH(
+    SELECTEDVALUE('Units'[Unit]),
+    "ODPt", [ODP Target],
+    "CO2eqt", [CO2eq target],
+    BLANK()
+)
+
+
+-- Dynamic axis/label showing selected unit and "target"
+Target Label = 
+SELECTEDVALUE('Units'[Unit]) & " 
+target"
+
+
+-- ============================================================
+-- 5. TOOLTIP MEASURES
+-- These measures are used exclusively in the custom map tooltip
+-- to display country-level progress on hover.
+-- ============================================================
+
+-- Phaseout progress formatted for tooltip — handles both units
+-- and returns "-" when no target exists
+Tooltip Phase Out Progress = 
+IF(
+    SELECTEDVALUE('Units'[Unit]) = "CO2eqt",
+    IF(
+        SUM('DataBase'[Consumption to be Phased Out per Proposal in CO2-eq Tonnes]) = 0 
+            || ISBLANK(SUM('DataBase'[Consumption to be Phased Out per Proposal in CO2-eq Tonnes])),
+        "-",
+        FORMAT(DIVIDE(
+            SUM('DataBase'[Consumption Phased Out in CO2-eq Tonnes]),
+            SUM('DataBase'[Consumption to be Phased Out per Proposal in CO2-eq Tonnes])
+        ), "0.00%")
+    ),
+    IF(
+        SUM('DataBase'[Consumption ODP to be Phased Out per Proposal]) = 0 
+            || ISBLANK(SUM('DataBase'[Consumption ODP to be Phased Out per Proposal])),
+        "-",
+        FORMAT(DIVIDE(
+            SUM('DataBase'[Consumption ODP Phased Out]),
+            SUM('DataBase'[Consumption ODP to be Phased Out per Proposal])
+        ), "0.00%")
+    )
+)
+
+
+-- Remaining phaseout value for tooltip — floors at 0 to avoid
+-- negative values from rounding differences
+Tooltip Remaining Value = 
+MAX(0,
+    IF(
+        SELECTEDVALUE('Units'[Unit]) = "CO2eqt",
+        SUM('DataBase'[Consumption to be Phased Out per Proposal in CO2-eq Tonnes]) 
+            - SUM('DataBase'[Consumption Phased Out in CO2-eq Tonnes]),
+        SUM('DataBase'[Consumption ODP to be Phased Out per Proposal]) 
+            - SUM('DataBase'[Consumption ODP Phased Out])
+    )
+)
+
+
+-- Dynamic label for phaseout progress row in tooltip
+Phase Out Progress % Label = 
+IF(
+    SELECTEDVALUE('Units'[Unit]) = "CO2eqt",
+    "CO2-eqt phase out",
+    "ODPt phase out"
+)
+
+
+-- Dynamic label for remaining phaseout row in tooltip
+Phase Out Remaining Tooltip Label = 
+IF(
+    SELECTEDVALUE('Units'[Unit]) = "CO2eqt",
+    "CO2eqt remaining",
+    "ODPt remaining"
+)
+
+
+-- Dynamic label for phaseout value in tooltip
+Phase Out Tooltip Value = 
+IF(
+    SELECTEDVALUE('Units'[Unit]) = "CO2eqt",
+    "CO2-eqt phase out",
+    "ODPt phase out"
+)
+
+
+-- ============================================================
+-- 6. CUMULATIVE PHASEOUT (TIME SERIES)
+-- Powers the dual-axis area chart on the Project Details page
+-- showing cumulative phaseout from 1990 to present.
+-- Capped at 2023 to avoid incomplete reporting years.
+-- ============================================================
+
+-- Cumulative CO2-equivalent tonnes phased out up to current year
+Cumulative CO2eq = 
+VAR CurrentYear = MAX('DateDimension'[Year])
+RETURN IF(
+    CurrentYear <= 2023,
+    CALCULATE(
+        SUM('DataBase'[Consumption Phased Out in CO2-eq Tonnes]),
+        'DateDimension'[Year] <= CurrentYear
+    ),
+    BLANK()
+)
+
+
+-- ============================================================
+-- 7. DYNAMIC LABELS AND DISPLAY
+-- Context-aware measures that drive dynamic text across the
+-- dashboard — country/region labels, flag images, filter
+-- display, and the latest multi-year project title.
+-- ============================================================
+
+-- Returns the most recently approved multi-year project title
+-- for the selected country — used in the map tooltip
+Latest MultiYear Title = 
+VAR MultiYearTable =
+    CALCULATETABLE(
+        'DataBase',
+        KEEPFILTERS(
+            'DataBase'[Multi-Year/Multi-Year Partial Phase-out/One-off Phase-Out/Individual/RMP/RMP Update/RMP for Non-LVC/Halon Banking]
+                = "Multi-Year"
+        )
+    )
+
+VAR LatestRow =
+    TOPN(
+        1,
+        MultiYearTable,
+        'DataBase'[Date Approved], DESC,
+        'DataBase'[Approved Funding plus Adjustments (US$)], DESC
+    )
+
+VAR Title = MAXX(LatestRow, 'DataBase'[Project Title])
+VAR Yr    = MAXX(LatestRow, YEAR('DataBase'[Date Approved]))
+
+RETURN
+IF(
+    ISBLANK(Title),
+    "No approval during time period selected",
+    Title & " (" & Yr & ")"
+)
+
+
+-- Dynamically returns the selected country name, region name,
+-- "Multiple selected", or "Global" depending on slicer state
+Selected Country or Region = 
+VAR CountryCount =
+    DISTINCTCOUNT(Lookup[Country_Name])
+
+VAR RegionCount =
+    DISTINCTCOUNT(Lookup[Regional Network])
+
+VAR CountryName =
+    SELECTEDVALUE(Lookup[Country_Name])
+
+VAR RegionName =
+    SELECTEDVALUE(Lookup[Regional Network])
+
+VAR TotalCountries =
+    CALCULATE(DISTINCTCOUNT(Lookup[Country_Name]), ALL(Lookup[Country_Name]))
+
+RETURN
+SWITCH(
+    TRUE(),
+    CountryCount = 1 && NOT ISBLANK(CountryName), CountryName,
+    CountryCount > 1 && RegionCount = 1 && NOT ISBLANK(RegionName), RegionName,
+    CountryCount = TotalCountries, "Global",
+    CountryCount > 1, "Multiple selected",
+    "Global"
+)
+
+
+-- Returns the flag URL for a single selected country, or a
+-- globe SVG when multiple countries or no country is selected
+Selected Image URL = 
+VAR CountriesInContext =
+    VALUES(Lookup[Country_Name])
+
+VAR CountryCount =
+    COUNTROWS(CountriesInContext)
+
+VAR GlobeImg =
+    "https://upload.wikimedia.org/wikipedia/commons/c/c4/Globe_icon.svg"
+
+VAR FlagSvg =
+    IF(
+        CountryCount = 1,
+        CALCULATE(
+            MAX(Lookup[Flag URL]),
+            TREATAS(CountriesInContext, Lookup[Country_Name])
+        )
+    )
+
+RETURN
+COALESCE(FlagSvg, GlobeImg)
+
+
+-- ============================================================
+-- 8. CALCULATED COLUMNS
+-- These are computed at the row level in the data model
+-- rather than as aggregations.
+-- ============================================================
+
+-- Assigns each project to a triennium period (e.g. 1991-1993)
+-- based on its approval date — used as a slicer/filter
+Triennium = 
+VAR DateApproved = DataBase[Date Approved]
+VAR Yr =
+    IF(
+        NOT ISBLANK(DateApproved),
+        YEAR(DateApproved)
+    )
+RETURN
+IF(
+    ISBLANK(Yr) || Yr < 1991,
+    BLANK(),
+    VAR AnchorYear = 1991
+    VAR Offset = Yr - AnchorYear
+    VAR StartYear = AnchorYear + (DIVIDE(Offset, 3, 0) * 3)
+    VAR EndYear = StartYear + 2
+    RETURN
+        FORMAT(StartYear, "0000") & "-" & FORMAT(EndYear, "0000")
+)
+
+
+-- Year extracted from financial completion date
+Year Completed = 
+YEAR(MAX('DataBase'[Date of Financial Completion]))
+
+
+-- Year extracted from approval date
+Year Approved = 
+YEAR(MAX('DataBase'[Date Approved]))
