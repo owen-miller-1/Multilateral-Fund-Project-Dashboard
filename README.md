@@ -13,15 +13,14 @@ An interactive Power BI dashboard visualizing the impact of the
 
 Built as a personal project to explore the fund's $4.3B+ in approved financing across 140+ countries from 1990 to present.
 
+
 ## Why I built it
 I have been working at the MLF Secretariat for about two years, and my role includes several data management and analysis tasks. My interest in data visualization and science communication led me to take the fund's publicly available progress report, a static excel file, and turn it into something that lets a general audience feel the scale of what the Montreal Protocol has achieved.
 
----
 
 ## Preview
 <img width="2065" height="1149" alt="MLF Dashboard gif2" src="https://github.com/user-attachments/assets/27bf4377-c0c9-4bb7-9743-99ecc67c2df8" />
 
----
 
 ## Features
 
@@ -45,10 +44,6 @@ Before building the dashboard, I enhanced the data in a few ways:
 - Applied additional transformations including field categorization, custom sort ordering, and column renaming for consistency across visuals
 
 
-
-
----
-
 ## Pages
 
 ### Overview
@@ -57,7 +52,6 @@ Regional/country-level summary with interactive map, KPI cards, and slicers for 
 ### Project Details
 Country-level drill-through showing full project list, agency and type breakdowns, and cumulative phaseout time series.
 
----
 
 ## Technical Stack
 
@@ -68,4 +62,7 @@ Country-level drill-through showing full project list, agency and type breakdown
 | ArcGIS Maps for Power BI | Choropleth map visual |
 | DAX | Measures for KPIs, tooltips, dynamic labels |
 | ChicletSlicer | Unit toggle (ODPt / CO2eqt) |
+
+## Repository Structure
+
 
