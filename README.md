@@ -20,6 +20,7 @@ I have been working at the MLF Secretariat for about two years, and my role incl
 
 ## Preview
 <img width="2065" height="1149" alt="MLF Dashboard gif2" src="https://github.com/user-attachments/assets/27bf4377-c0c9-4bb7-9743-99ecc67c2df8" />
+<img width="2428" height="1362" alt="MLF Dashboard gif3" src="https://github.com/user-attachments/assets/cf60d70a-0af2-44cf-a699-10c7f726bded" />
 
 
 ## Features
