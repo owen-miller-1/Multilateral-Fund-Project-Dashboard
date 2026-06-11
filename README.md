@@ -63,5 +63,8 @@ Country-level drill-through showing full project list, agency and type breakdown
 | ChicletSlicer | Unit toggle (ODPt / CO2eqt) |
 
 ## Repository Structure
-
+├── Screenshots/     ← Dashboard screenshots
+├── dax/             ← DAX measures
+├── deneb/           ← Vega-Lite specs for custom visuals
+└── README.md
 
