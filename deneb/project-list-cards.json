@@ -1,0 +1,288 @@
+{
+  "_comment": {
+    "visual": "Project List Cards",
+    "description": "A scrollable list of project cards displayed on the Project Details page. Each card shows the project code, title (wrapped across two lines if over 90 characters), agency, approval year and ExCom meeting number, completion year, approved budget, and funds disbursed. Rows alternate between white and light blue backgrounds. A green dot indicates an ongoing project; grey indicates completed. A blue left-edge accent bar is applied to each card. Cards are dynamically sized — rows with long titles are taller to accommodate the second title line.",
+    "schema": "Vega v5",
+    "fields_required": [
+      "Project Title",
+      "Code",
+      "Agency",
+      "Year_Approved",
+      "Mtg",
+      "Year Completed",
+      "Funds Approved",
+      "Funds Disbursed with PSC",
+      "Status"
+    ],
+    "sort_order": "Year_Approved descending, then Mtg descending"
+  },
+
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "padding": 8,
+
+  "data": [
+    {
+      "name": "dataset",
+      "transform": [
+
+        {
+          "_comment": "Sort by most recently approved projects first",
+          "type": "collect",
+          "sort": {
+            "field": ["Year_Approved", "Mtg"],
+            "order": ["descending", "descending"]
+          }
+        },
+
+        {
+          "_comment": "Wrap long titles — Line 1 is the first ~90 characters, broken at the last space",
+          "type": "formula",
+          "expr": "length(datum['Project Title']) > 90 ? slice(datum['Project Title'], 0, lastindexof(slice(datum['Project Title'], 0, 90), ' ')) : datum['Project Title']",
+          "as": "Title_Line1"
+        },
+
+        {
+          "_comment": "Line 2 is the remainder after the break point. Empty string if title fits on one line.",
+          "type": "formula",
+          "expr": "length(datum['Project Title']) > 90 ? slice(datum['Project Title'], lastindexof(slice(datum['Project Title'], 0, 90), ' ') + 1) : ''",
+          "as": "Title_Line2"
+        },
+
+        {
+          "_comment": "Rows with two title lines are 118px tall; single-line rows are 103px",
+          "type": "formula",
+          "expr": "length(datum['Project Title']) > 90 ? 118 : 103",
+          "as": "RowHeight"
+        },
+
+        {
+          "_comment": "Row number used to determine alternating background colour",
+          "type": "window",
+          "ops": ["row_number"],
+          "as": ["RowNum"]
+        },
+
+        {
+          "_comment": "Alternating row background: light blue for even rows, white for odd",
+          "type": "formula",
+          "expr": "datum.RowNum % 2 === 0 ? '#EEF3FB' : '#FFFFFF'",
+          "as": "RowBg"
+        },
+
+        {
+          "_comment": "Status indicator colour: green for ongoing (ONG), grey for all others",
+          "type": "formula",
+          "expr": "datum['Status'] === 'ONG' ? '#22C55E' : '#9CA3AF'",
+          "as": "StatusColor"
+        },
+
+        {
+          "_comment": "Ordinal suffix for ExCom meeting number (e.g. 97th, 1st, 2nd, 3rd)",
+          "type": "formula",
+          "expr": "datum['Mtg'] % 100 >= 11 && datum['Mtg'] % 100 <= 13 ? 'th' : datum['Mtg'] % 10 === 1 ? 'st' : datum['Mtg'] % 10 === 2 ? 'nd' : datum['Mtg'] % 10 === 3 ? 'rd' : 'th'",
+          "as": "MtgSuffix"
+        },
+
+        {
+          "_comment": "First info line: agency, approval year, ExCom meeting, and completion year",
+          "type": "formula",
+          "expr": "'Agency: ' + datum['Agency'] + '  |  Approved: ' + datum['Year_Approved'] + ' (' + datum['Mtg'] + datum['MtgSuffix'] + ' Meeting)  |  Completed: ' + (datum['Year Completed'] ? datum['Year Completed'] : '-')",
+          "as": "InfoLine1"
+        },
+
+        {
+          "_comment": "Second info line: approved budget and disbursed funds in full dollar format",
+          "type": "formula",
+          "expr": "'Budget: $' + format(datum['Funds Approved'], ',.0f') + '  |  Disbursed: $' + format(datum['Funds Disbursed with PSC'], ',.0f')",
+          "as": "InfoLine2"
+        }
+
+      ]
+    },
+
+    {
+      "_comment": "Cumulative sum of row heights to determine the Y position of each card",
+      "name": "dataset_positioned",
+      "source": "dataset",
+      "transform": [
+        {
+          "type": "window",
+          "ops": ["sum"],
+          "fields": ["RowHeight"],
+          "as": ["YEnd"],
+          "frame": [null, 0]
+        },
+        {
+          "_comment": "YPos is the top of each card — YEnd minus its own height",
+          "type": "formula",
+          "expr": "datum.YEnd - datum.RowHeight",
+          "as": "YPos"
+        }
+      ]
+    }
+  ],
+
+  "signals": [
+    { "name": "cardWidth", "value": 580 },
+
+    {
+      "_comment": "Total visual height is the YEnd of the last row — grows dynamically with the number of projects",
+      "name": "totalHeight",
+      "update": "data('dataset_positioned')[length(data('dataset_positioned'))-1].YEnd"
+    }
+  ],
+
+  "height": { "signal": "totalHeight" },
+  "width": { "signal": "cardWidth" },
+
+  "marks": [
+
+    {
+      "_comment": "Row background rect — alternates between white and light blue",
+      "type": "rect",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 0 },
+          "y": { "field": "YPos" },
+          "width": { "signal": "cardWidth" },
+          "height": { "field": "RowHeight" },
+          "fill": { "field": "RowBg" },
+          "stroke": { "value": "#C5D4ED" },
+          "strokeWidth": { "value": 1 },
+          "cornerRadius": { "value": 4 }
+        }
+      }
+    },
+
+    {
+      "_comment": "Blue left-edge accent bar — 4px wide, spans full card height",
+      "type": "rect",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 0 },
+          "y": { "field": "YPos" },
+          "width": { "value": 4 },
+          "height": { "field": "RowHeight" },
+          "fill": { "value": "#0050A0" },
+          "cornerRadiusTopLeft": { "value": 4 },
+          "cornerRadiusBottomLeft": { "value": 4 }
+        }
+      }
+    },
+
+    {
+      "_comment": "Status dot — green circle for ongoing, grey for completed/closed",
+      "type": "symbol",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "shape": { "value": "circle" },
+          "size": { "value": 80 },
+          "x": { "signal": "cardWidth - 16" },
+          "y": { "field": "YPos", "offset": 16 },
+          "fill": { "field": "StatusColor" }
+        }
+      }
+    },
+
+    {
+      "_comment": "Project code — bold blue, top of card",
+      "type": "text",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 14 },
+          "y": { "field": "YPos" },
+          "dy": { "value": 10 },
+          "text": { "field": "Code" },
+          "fontSize": { "value": 13 },
+          "fontWeight": { "value": "bold" },
+          "fill": { "value": "#0050A0" },
+          "align": { "value": "left" },
+          "baseline": { "value": "top" },
+          "limit": { "value": 500 }
+        }
+      }
+    },
+
+    {
+      "_comment": "Project title line 1",
+      "type": "text",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 14 },
+          "y": { "field": "YPos" },
+          "dy": { "value": 28 },
+          "text": { "field": "Title_Line1" },
+          "fontSize": { "value": 12 },
+          "fill": { "value": "#222222" },
+          "align": { "value": "left" },
+          "baseline": { "value": "top" },
+          "limit": { "value": 500 }
+        }
+      }
+    },
+
+    {
+      "_comment": "Project title line 2 — only visible when title exceeds 90 characters",
+      "type": "text",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 14 },
+          "y": { "field": "YPos" },
+          "dy": { "value": 44 },
+          "text": { "field": "Title_Line2" },
+          "fontSize": { "value": 12 },
+          "fill": { "value": "#222222" },
+          "align": { "value": "left" },
+          "baseline": { "value": "top" },
+          "limit": { "value": 500 },
+          "opacity": { "signal": "datum.Title_Line2 !== '' ? 1 : 0" }
+        }
+      }
+    },
+
+    {
+      "_comment": "Info line 1 — agency, approval year, ExCom meeting, completion year. Shifts down when title wraps.",
+      "type": "text",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 14 },
+          "y": { "field": "YPos" },
+          "dy": { "signal": "datum.Title_Line2 !== '' ? 68 : 52" },
+          "text": { "field": "InfoLine1" },
+          "fontSize": { "value": 12 },
+          "fill": { "value": "#555555" },
+          "align": { "value": "left" },
+          "baseline": { "value": "top" },
+          "limit": { "value": 500 }
+        }
+      }
+    },
+
+    {
+      "_comment": "Info line 2 — budget and disbursement figures. Shifts down when title wraps.",
+      "type": "text",
+      "from": { "data": "dataset_positioned" },
+      "encode": {
+        "enter": {
+          "x": { "value": 14 },
+          "y": { "field": "YPos" },
+          "dy": { "signal": "datum.Title_Line2 !== '' ? 86 : 70" },
+          "text": { "field": "InfoLine2" },
+          "fontSize": { "value": 12 },
+          "fill": { "value": "#555555" },
+          "align": { "value": "left" },
+          "baseline": { "value": "top" },
+          "limit": { "value": 500 }
+        }
+      }
+    }
+
+  ]
+}
