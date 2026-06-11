@@ -9,9 +9,9 @@
 ## Overview
 
 An interactive Power BI dashboard visualizing the impact of the 
-[Multilateral Fund for the Implementation of the Montreal Protocol (MLF)](https://www.multilateralfund.org/), a financial mechanism supporting developing countries in phasing out ozone-depleting substances and high global warming potential chemicals under the Montreal Protocol and Kigali Amendment.
+[Multilateral Fund for the Implementation of the Montreal Protocol (MLF)](https://www.multilateralfund.org/), a financial mechanism supporting developing countries in phasing out ozone-depleting substances and high global warming potential chemicals under the Montreal Protocol and Kigali Amendment. Built as a personal project to explore the fund's $4.3B+ in approved financing across 140+ countries from 1990 to present.
 
-Built as a personal project to explore the fund's $4.3B+ in approved financing across 140+ countries from 1990 to present.
+The dashboard primarily displays data on the status of Multilateral Fund financed projects, fund disbursement and substance phaseout progress.
 
 
 ## Why I built it
