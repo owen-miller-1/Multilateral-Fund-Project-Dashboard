@@ -68,6 +68,6 @@ Country-level drill-through showing full project list, agency and type breakdown
 ├── Screenshots/     ← Dashboard screenshots
 ├── dax/             ← DAX measures annotated with context
 ├── deneb/           ← Vega-Lite JSON specs for custom visuals
-├── data/            ← Source data and lookup tables
+├── data/            ← Source data
 └── README.md
 ```
