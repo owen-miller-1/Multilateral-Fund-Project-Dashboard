@@ -45,7 +45,6 @@ Before building the dashboard, I enhanced the data in a few ways:
 
 
 ## Pages
-
 ### Overview
 Regional/country-level summary with interactive map, KPI cards, and slicers for region, country, period, and attributes.
 
