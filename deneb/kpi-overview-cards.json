@@ -1,0 +1,392 @@
+{
+  "_comment": {
+    "visual": "KPI Overview Cards",
+    "description": "A row of six summary cards displayed at the top of the Overview page. Each card shows a key metric — Total Projects, Ongoing, Completed, Funds Approved, Funds Disbursed, and Disbursement Rate. Cards are evenly spaced and centred. The Ongoing card changes colour (green border/background) when active projects exist in the current filter context, and reverts to the default blue when none are present.",
+    "schema": "Vega v5",
+    "fields_required": [
+      "Completed Projects",
+      "Ongoing projects",
+      "Funds Approved",
+      "Funds Disbursed with PSC",
+      "Disbursement Rate"
+    ]
+  },
+
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "padding": 0,
+
+  "data": [{ "name": "dataset" }],
+
+  "signals": [
+    { "name": "cardWidth", "value": 88 },
+    { "name": "cardHeight", "value": 54 },
+    { "name": "gap", "value": 5 },
+
+    "_comment_totalW": "Total width of all 6 cards plus gaps between them",
+    { "name": "totalW", "update": "(cardWidth + gap) * 6 - gap" },
+
+    "_comment_offsetX": "Horizontal offset to centre the card row within the 619px visual width",
+    { "name": "offsetX", "update": "(619 - totalW) / 2" }
+  ],
+
+  "width": 619,
+  "height": 58,
+
+  "marks": [
+
+    {
+      "_comment": "Card 1 — Total Projects (sum of completed + ongoing)",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "_comment": "Outer border rect (1px larger on each side for border effect)",
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "value": "#C5D4ED" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "_comment": "Inner card background",
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "value": "#F0F5FF" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "_comment": "Metric value — sum of completed and ongoing projects",
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "signal": "datum['Completed Projects'] + (datum['Ongoing projects'] || 0)" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "value": "#0050A0" }, "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "_comment": "Card label",
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Total Projects" },
+              "fontSize": { "value": 9 }, "fill": { "value": "#666666" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "_comment": "Card 2 — Ongoing Projects. Turns green when ongoing projects exist; stays blue when none (e.g. a completed country filter).",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX + (cardWidth + gap) * 1" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "signal": "!datum['Ongoing projects'] ? '#C5D4ED' : '#86EFAC'" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "signal": "!datum['Ongoing projects'] ? '#F0F5FF' : '#DCFCE7'" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "signal": "!datum['Ongoing projects'] ? '-' : datum['Ongoing projects']" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "signal": "!datum['Ongoing projects'] ? '#0050A0' : '#22C55E'" },
+              "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Ongoing" },
+              "fontSize": { "value": 9 },
+              "fill": { "signal": "!datum['Ongoing projects'] ? '#666666' : '#22C55E'" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "_comment": "Card 3 — Completed Projects",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX + (cardWidth + gap) * 2" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "value": "#C5D4ED" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "value": "#F0F5FF" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "field": "Completed Projects" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "value": "#0050A0" }, "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Completed" },
+              "fontSize": { "value": 9 }, "fill": { "value": "#666666" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "_comment": "Card 4 — Funds Approved (displayed in $M, formatted to 1 decimal place)",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX + (cardWidth + gap) * 3" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "value": "#93B8D8" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "value": "#D6E4F7" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "signal": "'$' + format(datum['Funds Approved'] / 1000000, '.1f') + 'M'" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "value": "#0050A0" }, "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Funds Approved" },
+              "fontSize": { "value": 9 }, "fill": { "value": "#555555" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "_comment": "Card 5 — Funds Disbursed (displayed in $M, formatted to 1 decimal place)",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX + (cardWidth + gap) * 4" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "value": "#93B8D8" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "value": "#D6E4F7" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "signal": "'$' + format(datum['Funds Disbursed with PSC'] / 1000000, '.1f') + 'M'" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "value": "#0050A0" }, "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Funds Disbursed" },
+              "fontSize": { "value": 9 }, "fill": { "value": "#555555" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "_comment": "Card 6 — Disbursement Rate (formatted as percentage to 1 decimal place)",
+      "type": "group",
+      "encode": {
+        "enter": { "x": { "signal": "offsetX + (cardWidth + gap) * 5" }, "y": { "value": 2 } }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": -1 }, "y": { "value": -1 },
+              "width": { "signal": "cardWidth + 2" },
+              "height": { "signal": "cardHeight + 2" },
+              "fill": { "value": "#93B8D8" },
+              "cornerRadius": { "value": 5 }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 0 }, "y": { "value": 0 },
+              "width": { "signal": "cardWidth" },
+              "height": { "signal": "cardHeight" },
+              "fill": { "value": "#D6E4F7" },
+              "cornerRadius": { "value": 4 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": { "data": "dataset" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 10 },
+              "text": { "signal": "format(datum['Disbursement Rate'], '.1%')" },
+              "fontSize": { "value": 18 }, "fontWeight": { "value": "bold" },
+              "fill": { "value": "#0050A0" }, "align": { "value": "center" },
+              "baseline": { "value": "top" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "signal": "cardWidth / 2" }, "y": { "value": 38 },
+              "text": { "value": "Disbursement Rate" },
+              "fontSize": { "value": 9 }, "fill": { "value": "#555555" },
+              "align": { "value": "center" }, "baseline": { "value": "top" }
+            }
+          }
+        }
+      ]
+    }
+
+  ]
+}
