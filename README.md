@@ -53,7 +53,7 @@ Regional/country-level summary with interactive map, KPI cards, and slicers for 
 ### Project Details
 Country-level drill-through showing full project list, agency and type breakdowns, and cumulative phaseout time series.
 
-<img width="2424" height="1358" alt="MLF Dashboard gif4" src="https://github.com/user-attachments/assets/e3efe114-6baa-4663-a7b4-bd5d71b1bdc3" />
+
 
 ## Technical Stack
 
