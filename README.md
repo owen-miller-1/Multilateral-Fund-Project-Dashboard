@@ -70,7 +70,6 @@ Country-level drill-through showing full project list, agency and type breakdown
 ## Repository Structure
 
 ```
-├── Screenshots/     ← Dashboard screenshots
 ├── dax/             ← DAX measures annotated with context
 ├── deneb/           ← Vega-Lite JSON specs for custom visuals
 ├── data/            ← Source data
