@@ -1,7 +1,10 @@
 {
   "_comment": {
     "visual": "Project List Cards",
-    "description": "A scrollable list of project cards displayed on the Project Details page. Each card shows the project code, title (wrapped across two lines if over 90 characters), agency, approval year and ExCom meeting number, completion year, approved budget, and funds disbursed. Rows alternate between white and light blue backgrounds. A green dot indicates an ongoing project; grey indicates completed. A blue left-edge accent bar is applied to each card. Cards are dynamically sized — rows with long titles are taller to accommodate the second title line.",
+    "description": "A scrollable list of project cards displayed on the Project Details page. Each card shows the project code, 
+    title (wrapped across two lines if over 90 characters), agency, approval year and ExCom meeting number, completion year, approved budget, and funds disbursed. 
+    Rows alternate between white and light blue backgrounds. A green dot indicates an ongoing project; grey indicates completed. A blue left-edge accent bar is applied to each card. 
+    Cards are dynamically sized — rows with long titles are taller to accommodate the second title line.",
     "schema": "Vega v5",
     "fields_required": [
       "Project Title",
