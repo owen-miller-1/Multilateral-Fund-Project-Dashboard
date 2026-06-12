@@ -47,11 +47,13 @@ Before building the dashboard, I enhanced the data in a few ways:
 ## Pages
 ### Overview
 Regional/country-level summary with interactive map, KPI cards, and slicers for region, country, period, and attributes.
+
 <img width="1280" height="718" alt="ezgif com-video-to-gif-converter (1)" src="https://github.com/user-attachments/assets/be151f4f-d867-4f4f-a91f-1d151d23b7d2" />
 
 
 ### Project Details
 Country-level drill-through showing full project list, agency and type breakdowns, and cumulative phaseout time series.
+
 <img width="1280" height="717" alt="ScreenRecording2026-06-11151325-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/7fafe76c-9b87-443b-811d-79d5b6a54315" />
 
 
