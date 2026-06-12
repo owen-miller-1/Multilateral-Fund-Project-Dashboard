@@ -1,7 +1,9 @@
 {
   "_comment": {
     "visual": "KPI Overview Cards",
-    "description": "A row of six summary cards displayed at the top of the Overview page. Each card shows a key metric — Total Projects, Ongoing, Completed, Funds Approved, Funds Disbursed, and Disbursement Rate. Cards are evenly spaced and centred. The Ongoing card changes colour (green border/background) when active projects exist in the current filter context, and reverts to the default blue when none are present.",
+    "description": "A row of six summary cards displayed at the top of the Overview page. 
+    Each card shows a key metric — Total Projects, Ongoing, Completed, Funds Approved, Funds Disbursed, and Disbursement Rate. 
+    Cards are evenly spaced and centred. The Ongoing card changes colour (green border/background) when active projects exist in the current filter context, and reverts to the default blue when none are present.",
     "schema": "Vega v5",
     "fields_required": [
       "Completed Projects",
