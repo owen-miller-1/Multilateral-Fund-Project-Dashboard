@@ -24,7 +24,7 @@ I have been working at the MLF Secretariat for about two years, and my role incl
 
 ## Features
 
-- **Interactive choropleth map**: ArcGIS visual used to explore project coverage and intensity by country or region. Users can click directly on the map to filter the page, or use the slicers on the left to break down the data. 
+- **Interactive choropleth map**: ArcGIS visual used to explore project coverage and intensity by country or region. Shading applied to visually differentiate the number of projects completed in all countries. Users can click directly on the map to filter the page, or use the slicers on the left to break down the data. 
 - **Custom tooltip**: hover any country to see disbursement progress, phase-out progress, and latest multi-year project approved. 
 - **Drill-through Projects page**: country-level project list, agency breakdown, project type breakdown, and cumulative phaseout chart. Users can apply necessary filters, and select the image of the globe/country to drill through to a more detailed project page. 
 - **Custom Deneb/Vega visuals** : project list cards and KPI summary bar built with Vega spec.
