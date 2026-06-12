@@ -52,7 +52,7 @@ Regional/country-level summary with interactive map, KPI cards, and slicers for 
 
 ### Project Details
 Country-level drill-through showing full project list, agency and type breakdowns, and cumulative phaseout time series.
-<img width="1280" height="717" alt="image" src="https://github.com/user-attachments/assets/65a67661-58ce-4a82-9522-6efdb066d6d1" />
+<img width="1280" height="717" alt="ScreenRecording2026-06-11151325-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/7fafe76c-9b87-443b-811d-79d5b6a54315" />
 
 
 ## Technical Stack
